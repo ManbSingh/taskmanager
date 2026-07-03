@@ -1,0 +1,40 @@
+body {
+    background-color: #f5f6fa;
+}
+
+.card {
+    border: none;
+    border-radius: 0.6rem;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+.badge-status {
+    font-size: 0.8rem;
+    padding: 0.45em 0.7em;
+}
+
+.status-open {
+    background-color: #6c757d;
+}
+
+.status-in-progress {
+    background-color: #0d6efd;
+}
+
+.status-completed {
+    background-color: #198754;
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+.task-desc-cell {
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
