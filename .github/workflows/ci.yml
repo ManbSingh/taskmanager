@@ -8,7 +8,9 @@ on:
 
 jobs:
   build-and-run:
-    runs-on: ubuntu-latest
+    # Change this from ubuntu-latest to ubuntu-22.04
+    runs-on: ubuntu-22.04 
+
 
     steps:
       - name: Checkout Application
