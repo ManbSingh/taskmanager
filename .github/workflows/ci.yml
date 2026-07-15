@@ -1,0 +1,42 @@
+name: Build and Run Task Manager
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Application
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t taskmanager .
+
+      - name: Start Container
+        run: docker run -d -p 5000:5000 --name taskmanager taskmanager
+
+      - name: Wait for Application
+        run: |
+          for i in {1..30}; do
+            if curl -f http://localhost:5000/health; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Show Running Containers
+        run: docker ps
+
+      - name: Stop Container
+        if: always()
+        run: docker stop taskmanager
+
+      - name: Remove Container
+        if: always()
+        run: docker rm taskmanager
