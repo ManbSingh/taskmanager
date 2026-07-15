@@ -14,6 +14,24 @@ jobs:
       - name: Checkout Application
         uses: actions/checkout@v4
 
+      - name: Checkout Playwright Tests
+        uses: actions/checkout@v4
+        with:
+          repository: 'ManbSingh/playwrightpython'
+          path: 'playwright-tests'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Test Dependencies
+        run: |
+          cd playwright-tests
+          pip install -r requirements.txt
+          pip install allure-pytest          # Ensures the --alluredir flag works
+          playwright install --with-deps
+
       - name: Build Docker Image
         run: docker build -t taskmanager .
 
@@ -30,13 +48,22 @@ jobs:
           done
           exit 1
 
-      - name: Show Running Containers
-        run: docker ps
+      # Runs your exact local test command with adjusted repository pathways
+      - name: Run Playwright Tests (Matching Local Execution)
+        run: |
+          cd playwright-tests
+          pytest apps/tests/taskmanager/ -s -v --env qa --app taskmanager --alluredir=allure-results
+
+      # Extracts and drops your Allure results into the Actions dashboard summary
+      - name: Upload Allure Results Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: playwright-tests/allure-results/
 
       - name: Stop Container
         if: always()
-        run: docker stop taskmanager
-
-      - name: Remove Container
-        if: always()
-        run: docker rm taskmanager
+        run: |
+          docker stop taskmanager || true
+          docker rm taskmanager || true
