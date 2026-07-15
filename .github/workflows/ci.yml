@@ -52,6 +52,10 @@ jobs:
 
       # Runs your exact local test command with adjusted repository pathways
       - name: Run Playwright Tests (Matching Local Execution)
+        env:
+          # Your ConfigHandler looks for APP_USERNAME_QA, APP_PASSWORD_QA, etc.
+          QA_APP_USERNAME: ${{ secrets.APP_USERNAME_QA }}
+          QA_APP_PASSWORD: ${{ secrets.APP_PASSWORD_QA }}
         run: |
           cd playwright-tests
           pytest apps/tests/taskmanager/ -s -v --env qa --app taskmanager --alluredir=allure-results
