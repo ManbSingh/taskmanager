@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  pull_request: 
+  pull_request:
 
 jobs:
   build-and-run:
@@ -54,8 +54,8 @@ jobs:
       - name: Run Playwright Tests (Matching Local Execution)
         env:
           # Your ConfigHandler looks for APP_USERNAME_QA, APP_PASSWORD_QA, etc.
-          QA_APP_USERNAME: ${{ secrets.APP_USERNAME_QA }}
-          QA_APP_PASSWORD: ${{ secrets.APP_PASSWORD_QA }}
+          APP_USERNAME_QA: ${{ secrets.APP_USERNAME_QA }}
+          APP_PASSWORD_QA: ${{ secrets.APP_PASSWORD_QA }}
         run: |
           cd playwright-tests
           pytest apps/tests/taskmanager/test_dashboard.py -s -v --env qa --app taskmanager --alluredir=allure-results
