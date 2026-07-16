@@ -59,7 +59,6 @@ jobs:
           DB_USERNAME_QA: ${{ secrets.DB_USERNAME_QA }}
           DB_PASSWORD_QA: ${{ secrets.DB_PASSWORD_QA }}
         run: |
-          env | grep -E 'APP_USERNAME_QA|APP_PASSWORD_QA|QA_APP_USERNAME|QA_APP_PASSWORD|DB_USERNAME_QA|DB_PASSWORD_QA'  
           cd playwright-tests
           pytest apps/tests/taskmanager/test_dashboard.py -s -v --env qa --app taskmanager --alluredir=allure-results
 
