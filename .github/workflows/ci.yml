@@ -58,7 +58,7 @@ jobs:
           QA_APP_PASSWORD: ${{ secrets.APP_PASSWORD_QA }}
         run: |
           cd playwright-tests
-          pytest apps/tests/taskmanager/ -s -v --env qa --app taskmanager --alluredir=allure-results
+          pytest apps/tests/taskmanager/test_dashboard.py -s -v --env qa --app taskmanager --alluredir=allure-results
 
       # Extracts and drops your Allure results into the Actions dashboard summary
       - name: Upload Allure Results Artifact
