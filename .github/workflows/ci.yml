@@ -50,7 +50,7 @@ jobs:
           done
           exit 1
       - name: Debug env
-      run: |
+        run: |
           env | grep -E 'APP_USERNAME_QA|APP_PASSWORD_QA|QA_APP_USERNAME|QA_APP_PASSWORD|DB_USERNAME_QA|DB_PASSWORD_QA'
 
       # Runs your exact local test command with adjusted repository pathways
