@@ -25,6 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ManbSingh/playwrightpython
+          token: ${{ secrets.ALL_REPO_ACCESS_TOKEN }} # Use a custom secret if it's a private repo outside this organization
           path: playwright-tests
 
       - name: Setup Python
