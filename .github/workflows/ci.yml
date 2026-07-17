@@ -54,12 +54,18 @@ jobs:
       - name: Run Playwright Tests (Matching Local Execution)
         env:
           # Your ConfigHandler looks for APP_USERNAME_QA, APP_PASSWORD_QA, DB_USERNAME_QA, DB_PASSWORD_QA etc.
-          APP_USERNAME_QA: ${{ secrets.APP_USERNAME_DOCKER }}
-          APP_PASSWORD_QA: ${{ secrets.APP_PASSWORD_DOCKER }}
-          DB_USERNAME_QA: ${{ secrets.DB_USERNAME_DOCKER }}
-          DB_PASSWORD_QA: ${{ secrets.DB_PASSWORD_DOCKER }}
+          APP_USERNAME_DOCKER: ${{ secrets.APP_USERNAME_DOCKER }}
+          APP_PASSWORD_DOCKER: ${{ secrets.APP_PASSWORD_DOCKER }}
+          DB_USERNAME_DOCKER: ${{ secrets.DB_USERNAME_DOCKER }}
+          DB_PASSWORD_DOCKER: ${{ secrets.DB_PASSWORD_DOCKER }}
         run: |
           cd playwright-tests
+          echo "=== Debugging Secret Population (Character Count) ==="
+          echo "APP_USERNAME_DOCKER length: ${#APP_USERNAME_QA}"
+          echo "APP_PASSWORD_DOCKER length: ${#APP_PASSWORD_QA}"
+          echo "DB_USERNAME_DOCKER length: ${#DB_USERNAME_QA}"
+          echo "DB_PASSWORD_DOCKER length: ${#DB_PASSWORD_QA}"
+          echo "====================================================="
           pytest -m unit apps/tests/taskmanager/test_dashboard.py -s -v --env docker --app taskmanager --alluredir=allure-results
 
       # Extracts and drops your Allure results into the Actions dashboard summary
