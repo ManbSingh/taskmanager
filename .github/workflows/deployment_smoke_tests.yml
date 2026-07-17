@@ -1,0 +1,68 @@
+name: DEV Deployment Smoke Tests
+
+on:
+  workflow_run:
+    workflows:
+      - "Task Manager CI"
+    types:
+      - completed
+
+jobs:
+  smoke-tests:
+    # Only run if CI succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    runs-on: ubuntu-22.04
+
+    env:
+      BASE_URL: https://taskmanager-w3z7.onrender.com
+
+    steps:
+      - name: Checkout Playwright Tests
+        uses: actions/checkout@v4
+        with:
+          repository: ManbSingh/playwrightpython
+          path: playwright-tests
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          cd playwright-tests
+          pip install -r requirements.txt
+          pip install allure-pytest
+          playwright install --with-deps
+
+      - name: Wait for Render Deployment
+        run: |
+          echo "Waiting for deployment..."
+          for i in {1..60}; do
+            if curl -fs $BASE_URL/health > /dev/null; then
+              echo "Application is healthy."
+              exit 0
+            fi
+            echo "Still deploying..."
+            sleep 10
+          done
+          echo "Deployment timeout."
+          exit 1
+
+      - name: Run Smoke Tests
+        env:
+          APP_USERNAME_QA: ${{ secrets.APP_USERNAME_DEV }}
+          APP_PASSWORD_QA: ${{ secrets.APP_PASSWORD_DEV}}
+          DB_USERNAME_QA: ${{ secrets.DB_USERNAME_DEV }}
+          DB_PASSWORD_QA: ${{ secrets.DB_PASSWORD_DEV }}
+        run: |
+          cd playwright-tests
+          pytest -m smoke apps/tests/taskmanager/test_dashboard.py -s -v --env dev --app taskmanager --alluredir=allure-results
+          
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-allure-results
+          path: playwright-tests/allure-results/

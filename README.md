@@ -170,9 +170,154 @@ curl -X DELETE http://localhost:5000/api/tasks/1 -b cookies.txt
 ```bash
 curl http://localhost:5000/health
 ```
+## Running Locally
 
+```bash
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Linux / macOS
+source venv/bin/activate
+
+pip install -r requirements.txt
+
+python app.py
+```
+
+Application URL:
+
+```
+http://localhost:5000
+```
+
+Default credentials:
+
+```
+Username: admin
+Password: admin123
+```
+
+---
+
+## Running with Docker
+
+Build the image:
+
+```bash
+docker build -t taskmanager .
+```
+
+Run the container:
+
+```bash
+docker run -d \
+-p 5000:5000 \
+--name taskmanager \
+-e SECRET_KEY="change-this-secret" \
+-v taskmanager-data:/app/instance \
+taskmanager
+```
+
+Application URL:
+
+```
+http://localhost:5000
+```
+
+---
+
+## Continuous Integration
+
+Every push to the **main** branch automatically triggers a GitHub Actions workflow that:
+
+- Builds the Docker image
+- Starts the application container
+- Verifies the `/health` endpoint
+- Executes Playwright end-to-end tests
+- Generates Allure test results
+- Uploads the test report as a GitHub Actions artifact
+- Cleans up the Docker container
+
+---
+
+## REST API
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/tasks` | List tasks |
+| GET | `/api/tasks/<id>` | Get task |
+| POST | `/api/tasks` | Create task |
+| PUT | `/api/tasks/<id>` | Update task |
+| DELETE | `/api/tasks/<id>` | Delete task |
+| GET | `/health` | Health check |
+
+---
+
+## Environment Variables
+
+| Variable | Default |
+|----------|---------|
+| `SECRET_KEY` | `dev-secret-key-change-in-production` |
+| `DATABASE_URL` | `sqlite:///instance/tasks.db` |
+
+---
 ## Notes
 
 - The SQLite database file is created automatically at `instance/tasks.db` on first run.
 - Tasks are scoped per-user — each user only sees and manages their own tasks.
 - This project is intended as a learning/demo reference implementation. For production use, replace the default admin credentials, set a strong `SECRET_KEY`, and consider a production-grade database (e.g., PostgreSQL) via the `DATABASE_URL` environment variable.
+
+# final flow
+Developer
+    |
+    ↓
+git push main
+    |
+    ↓
+GitHub Actions
+    |
+    ├── Checkout code
+    ├── Build Docker image
+    ├── Start container
+    ├── Run Playwright tests against the temporary container (Unit Tests)
+    ├── Generate report
+    ├── Destroys Container and Docker
+    
+    ↓
+IF PASS
+    |
+    ↓
+Render Deployment (Render Auto-Deploy feature listens: After CI Checks Pass) Auto deploy
+    |
+    ↓
+DEV ENV (https://taskmanager-w3z7.onrender.com/)
+    |
+    ↓
+Run Playwright pytest tests against the deployed app. (SMOKE TESTS)
+    |
+    ↓
+Deploy to QA Env(after smoke tests pass)
+    |
+    ↓
+QA Env
+    |
+    ↓
+Run Full Regression
+   UI
+   API
+   Database
+   Integration
+   
+# This is a cleaner separation:
+
+GitHub Actions = CI
+Render = Deployment/CD
+
+## Future Enhancements
+
+- Publish Docker image to a container registry
+- Deploy to Kubernetes or a cloud platform
+- Add CI/CD deployment environments (DEV → QA → STAGE)
+- API automation integration

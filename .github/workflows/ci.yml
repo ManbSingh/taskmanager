@@ -1,4 +1,4 @@
-name: Build and Run Task Manager
+name: Task Manager CI
 
 on:
   push:
@@ -60,7 +60,7 @@ jobs:
           DB_PASSWORD_QA: ${{ secrets.DB_PASSWORD_QA }}
         run: |
           cd playwright-tests
-          pytest apps/tests/taskmanager/test_dashboard.py -s -v --env qa --app taskmanager --alluredir=allure-results
+          pytest -m unit apps/tests/taskmanager/test_dashboard.py -s -v --env docker --app taskmanager --alluredir=allure-results
 
       # Extracts and drops your Allure results into the Actions dashboard summary
       - name: Upload Allure Results Artifact
