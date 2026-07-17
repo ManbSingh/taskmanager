@@ -9,7 +9,7 @@ on:
 permissions:
   contents: read
   actions: read
-
+  checks: write
 jobs:
   smoke-tests:
     # Only run if CI succeeded

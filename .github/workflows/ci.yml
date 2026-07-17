@@ -8,6 +8,7 @@ on:
 permissions:
   contents: read
   actions: read
+  checks: write
 jobs:
   build-and-run:
     # Change this from ubuntu-latest to ubuntu-22.04
