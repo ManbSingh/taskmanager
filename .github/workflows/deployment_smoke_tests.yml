@@ -52,10 +52,10 @@ jobs:
 
       - name: Run Smoke Tests
         env:
-          APP_USERNAME_QA: ${{ secrets.APP_USERNAME_DEV }}
-          APP_PASSWORD_QA: ${{ secrets.APP_PASSWORD_DEV}}
-          DB_USERNAME_QA: ${{ secrets.DB_USERNAME_DEV }}
-          DB_PASSWORD_QA: ${{ secrets.DB_PASSWORD_DEV }}
+          APP_USERNAME_DEV: ${{ secrets.APP_USERNAME_DEV }}
+          APP_PASSWORD_DEV: ${{ secrets.APP_PASSWORD_DEV}}
+          DB_USERNAME_DEV: ${{ secrets.DB_USERNAME_DEV }}
+          DB_PASSWORD_DEV: ${{ secrets.DB_PASSWORD_DEV }}
         run: |
           cd playwright-tests
           pytest -m smoke apps/tests/taskmanager/test_dashboard.py -s -v --env dev --app taskmanager --alluredir=allure-results
