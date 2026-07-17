@@ -5,25 +5,27 @@ on:
     branches:
       - main
   pull_request:
+
 permissions:
   contents: read
   actions: read
   checks: write
+
 jobs:
   build-and-run:
-    # Change this from ubuntu-latest to ubuntu-22.04
-    runs-on: ubuntu-22.04 
-
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout Application
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ALL_REPO_ACCESS_TOKEN }}
 
       - name: Checkout Playwright Tests
         uses: actions/checkout@v4
         with:
           repository: 'ManbSingh/playwrightpython'
-          token: ${{ secrets.ALL_REPO_ACCESS_TOKEN }} # Use a custom secret if it's a private repo outside this organization
+          token: ${{ secrets.ALL_REPO_ACCESS_TOKEN }}
           path: 'playwright-tests'
 
       - name: Setup Python
@@ -35,7 +37,7 @@ jobs:
         run: |
           cd playwright-tests
           pip install -r requirements.txt
-          pip install allure-pytest          # Ensures the --alluredir flag works
+          pip install allure-pytest
           playwright install --with-deps
 
       - name: Build Docker Image
@@ -54,10 +56,8 @@ jobs:
           done
           exit 1
       
-      # Runs your exact local test command with adjusted repository pathways
-      - name: Run Playwright Tests (Matching Local Execution)
+      - name: Run Playwright Tests
         env:
-          # Your ConfigHandler looks for APP_USERNAME_QA, APP_PASSWORD_QA, DB_USERNAME_QA, DB_PASSWORD_QA etc.
           APP_USERNAME_DOCKER: ${{ secrets.APP_USERNAME_DOCKER }}
           APP_PASSWORD_DOCKER: ${{ secrets.APP_PASSWORD_DOCKER }}
           DB_USERNAME_DOCKER: ${{ secrets.DB_USERNAME_DOCKER }}
@@ -65,14 +65,13 @@ jobs:
         run: |
           cd playwright-tests
           echo "=== Debugging Secret Population (Character Count) ==="
-          echo "APP_USERNAME_DOCKER length: ${#APP_USERNAME_QA}"
-          echo "APP_PASSWORD_DOCKER length: ${#APP_PASSWORD_QA}"
-          echo "DB_USERNAME_DOCKER length: ${#DB_USERNAME_QA}"
-          echo "DB_PASSWORD_DOCKER length: ${#DB_PASSWORD_QA}"
+          echo "APP_USERNAME_DOCKER length: ${#APP_USERNAME_DOCKER}"
+          echo "APP_PASSWORD_DOCKER length: ${#APP_PASSWORD_DOCKER}"
+          echo "DB_USERNAME_DOCKER length: ${#DB_USERNAME_DOCKER}"
+          echo "DB_PASSWORD_DOCKER length: ${#DB_PASSWORD_DOCKER}"
           echo "====================================================="
           pytest -m unit apps/tests/taskmanager/test_dashboard.py -s -v --env docker --app taskmanager --alluredir=allure-results
 
-      # Extracts and drops your Allure results into the Actions dashboard summary
       - name: Upload Allure Results Artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -85,4 +84,3 @@ jobs:
         run: |
           docker stop taskmanager || true
           docker rm taskmanager || true
- 
