@@ -6,6 +6,9 @@ on:
       - "Task Manager CI"
     types:
       - completed
+permissions:
+  contents: read
+  actions: read
 
 jobs:
   smoke-tests:
