@@ -298,18 +298,18 @@ DEV ENV (https://taskmanager-w3z7.onrender.com/)
 Run Playwright pytest tests against the deployed app. (SMOKE TESTS)
     |
     ↓
-Deploy to QA Env(after smoke tests pass)
+QA_DEPLOY.yml (Deploy to QA Env(after smoke tests pass)) - Manual review and approval
     |
     ↓
 QA Env
     |
     ↓
-Run Full Regression
+Run Full Regression (Triggered Manually)
    UI
    API
    Database
    Integration
-   
+
 # This is a cleaner separation:
 
 GitHub Actions = CI

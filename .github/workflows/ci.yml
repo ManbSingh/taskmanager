@@ -1,4 +1,4 @@
-name: Task Manager CI
+name: CI buil & automated tesst - taskmanager
 
 on:
   push:
