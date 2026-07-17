@@ -1,0 +1,68 @@
+name: QA Regression Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  regression-tests:
+
+    runs-on: ubuntu-22.04
+
+    env:
+      QA_BASE_URL: https://taskmanager-qa.onrender.com
+
+    steps:
+
+      - name: Checkout Playwright Tests
+        uses: actions/checkout@v4
+        with:
+          repository: ManbSingh/playwrightpython
+          path: playwright-tests
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Test Dependencies
+        run: |
+          cd playwright-tests
+          pip install -r requirements.txt
+          pip install allure-pytest
+          playwright install --with-deps
+
+      - name: Wait for QA Application
+        run: |
+          echo "Checking QA environment..."
+
+          for i in {1..60}; do
+            if curl -fs $QA_BASE_URL/health > /dev/null; then
+              echo "QA application is healthy."
+              exit 0
+            fi
+
+            echo "Waiting for QA..."
+            sleep 10
+          done
+
+          echo "QA environment unavailable."
+          exit 1
+
+
+      - name: Run QA Regression Suite
+        env:
+          APP_USERNAME_QA: ${{ secrets.APP_USERNAME_QA }}
+          APP_PASSWORD_QA: ${{ secrets.APP_PASSWORD_QA }}
+          DB_USERNAME_QA: ${{ secrets.DB_USERNAME_QA }}
+          DB_PASSWORD_QA: ${{ secrets.DB_PASSWORD_QA }}
+
+        run: |
+          cd playwright-tests
+          pytest -m regression apps/tests/taskmanager/test_dashboard.py -s -v --env qa --app taskmanager --alluredir=allure-results
+        
+      - name: Upload QA Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-regression-allure-results
+          path: playwright-tests/allure-results/

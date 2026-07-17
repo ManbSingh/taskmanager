@@ -1,0 +1,32 @@
+name: Deploy to QA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-qa:
+    runs-on: ubuntu-22.04
+
+    env:
+      QA_BASE_URL: https://taskmanager-qa.onrender.com
+
+    steps:
+      - name: Trigger QA Deployment
+        run: |
+          echo "Triggering Render QA deployment..."
+          curl "${{ secrets.RENDER_QA_DEPLOY_HOOK }}"
+
+      - name: Wait for QA Deployment
+        run: |
+          echo "Waiting for QA deployment..."
+          for i in {1..60}; do
+            if curl -fs $QA_BASE_URL/health > /dev/null; then
+              echo "QA deployment successful."
+              exit 0
+            fi
+            echo "Application not ready yet..."
+            sleep 10
+          done
+
+          echo "Timed out waiting for QA deployment."
+          exit 1
