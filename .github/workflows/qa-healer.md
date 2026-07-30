@@ -3,12 +3,14 @@ name: QA Regression Agentic Healer
 
 on:
   workflow_dispatch:
-  schedule: daily around 5am utc
+  schedule:
+    - cron: "53 4 * * *"
 
 permissions:
-  contents: read
-  issues: read
-  pull-requests: read
+  contents: write
+  issues: write
+  pull-requests: write
+  copilot-requests: write
 
 engine: copilot
 
