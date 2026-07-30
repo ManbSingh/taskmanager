@@ -321,3 +321,43 @@ Render = Deployment/CD
 - Deploy to Kubernetes or a cloud platform
 - Add CI/CD deployment environments (DEV → QA → STAGE)
 - API automation integration
+
+
+-------------------------------
+
+🤖 Agentic QA Regression Test Orchestrator
+This repository utilizes GitHub Agentic Workflows powered by GitHub Copilot to transform a standard, deterministic regression pipeline into an autonomous feedback-loop engine.Instead of just failing and uploading an artifact, this workflow runs daily, analyzes test logs, determines if a failure is an automation issue or an application defect, self-heals broken UI selectors/locators, re-validates the fixes, and automatically opens Pull Requests or GitHub Issues based on its findings.
+
+🛠️ Step 1: Tooling Installation & Local SetupTo manage, compile, and lock down your agentic instruction
+
+Install GitHub CLI (gh):
+
+winget install --id GitHub.cli
+
+Authenticate the CLI:
+
+gh auth login
+
+Follow the interactive prompts: Choose GitHub.com -> HTTPS -> Log in with a web browser.
+
+Install the Agentic Workflows Extension:
+Install the native compiler extension that translates markdown prompts into secure workflow files:
+
+gh extension install github/gh-aw
+
+
+Define the Agentic Behavior:
+Add .md file under the workflows
+
+Compile and Deploy the Orchestrator:
+
+Navigate to your project root repository in your terminal.
+Compile your markdown file using the extension:
+
+gh aw compile
+
+
+
+
+
+
