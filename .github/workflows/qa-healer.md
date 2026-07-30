@@ -7,9 +7,9 @@ on:
     - cron: "53 4 * * *"
 
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: read
+  issues: read
+  pull-requests: read
   copilot-requests: write
 
 engine: copilot
